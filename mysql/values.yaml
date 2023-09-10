@@ -17,5 +17,5 @@ replicaCount: 3
 
 vault:
   enabled: true
-  address: http://vault:8200
+  address: http://172.20.228.55:8200
   token: vault:/token 
