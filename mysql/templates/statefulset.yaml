@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "mysql.fullname" . }}
-  ... labels:
-    app: {{ include "mysql.name" . }}
+  name: "mysql"
+  labels:
+    app: "mysql"
 spec:
-  serviceName: {{ include "mysql.fullname" . }}-headless
+  serviceName: mysql-headless
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "mysql.name" . }}
+      app: mysql
   template:
-    ... metadata:
+    metadata:
       labels:
-        app: {{ include "mysql.name" . }}
+        app: mysql
     spec:
       containers:
         - name: {{ .Chart.Name }}
