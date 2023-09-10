@@ -31,7 +31,7 @@ spec:
     - metadata:
         name: mysql-persistent-storage
       spec:
-        accessModes: [ "{{ ... .Values.persistence.accessMode }}" ]
+        accessModes: [ "{{ .Values.persistence.accessMode }}" ]
         storageClassName: "{{ .Values.persistence.storageClass }}"
         resources:
           requests:
