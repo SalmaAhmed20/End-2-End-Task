@@ -5,7 +5,7 @@ image:
   tag: 8.0.26
   pullPolicy: IfNotPresent
 
-mysqlRootPassword: secret/data/mysql/root_password
+mysqlRootPassword: vault:secret/data/mysql/root_password
 # mysqlRootPassword: "uThgBCQHjyF5hB8"
 persistence:
   enabled: true
