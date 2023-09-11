@@ -9,11 +9,6 @@ metadata:
     vault.hashicorp.com/agent-cache-enable: "true"
     vault.hashicorp.com/agent-inject-secret-mysql_root_pass: "secret/mysql_root_pass"
     vault.hashicorp.com/role: "read_mysql_root"
-    vault.hashicorp.com/agent-inject-template-mysql_root_pass: |
-          {{- with secret "secret/my_sql_root_pass" -}}
-          export MYSQL_ROOT_PASSWORD =  {{ .Data.mysqlRootPassword }}
-          {{- end -}} 
-
 spec:
   serviceName: mysql-headless
   replicas: {{ .Values.replicaCount }}
@@ -29,10 +24,7 @@ spec:
         vault.hashicorp.com/agent-cache-enable: "true"
         vault.hashicorp.com/agent-inject-secret-mysql_root_pass: "secret/mysql_root_pass"
         vault.hashicorp.com/role: "read_mysql_root"
-        vault.hashicorp.com/agent-inject-template-mysql_root_pass: |
-          {{- with secret "secret/my_sql_root_pass" -}}
-          export MYSQL_ROOT_PASSWORD =  {{ .Data.mysqlRootPassword }}
-          {{- end -}} 
+
     spec:
       serviceAccountName: mysql
       containers:
