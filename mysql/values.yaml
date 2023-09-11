@@ -5,7 +5,7 @@ image:
   tag: 8.0.26
   pullPolicy: IfNotPresent
 
-mysqlRootPassword: vault:secret/data/mysql/root_password
+# mysqlRootPassword: vault:secret/data/mysql/root_password
 # mysqlRootPassword: "uThgBCQHjyF5hB8"
 persistence:
   enabled: true
@@ -15,7 +15,7 @@ persistence:
 
 replicaCount: 3
 
-vault:
-  enabled: true
-  address: http://172.20.228.55:8200
-  token: vault:/token 
+# vault:
+#   enabled: true
+#   address: :30873
+#   token: vault:/token 
