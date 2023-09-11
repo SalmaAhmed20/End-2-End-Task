@@ -27,7 +27,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value:"" 111"
+              value: "111"
           ports:
             - containerPort: 3306
           volumeMounts:
