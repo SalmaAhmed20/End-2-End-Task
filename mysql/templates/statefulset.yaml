@@ -15,9 +15,14 @@ spec:
       labels:
         app: mysql
       annotations:
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/agent-inject-secret-mysqlrootpass: "secret/mysqlrootpass"
-        vault.hashicorp.com/role: "read_mysql_root"
+        vault.hashicorp.com/agent-inject: 'true'
+         vault.hashicorp.com/agent-inject-status: 'update'
+         vault.hashicorp.com/role: 'read_mysql_app'
+         vault.hashicorp.com/agent-inject-secret-database-config.txt: 'secret/mysqlrootpass'
+         vault.hashicorp.com/agent-inject-template-database-config.txt: |
+            {{- with secret "secret/mysqlrootpass" -}}
+            export MYSQL_ROOT_PASSWORD = {{ .Data.mysqlRootPassword }}
+            {{- end -}}
     spec:
       serviceAccountName: mysql
       containers:
