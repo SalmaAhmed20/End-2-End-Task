@@ -26,7 +26,7 @@ spec:
         vault.hashicorp.com/agent-inject-secret-mysql_root_pass: "secret/mysql_root_pass"
         vault.hashicorp.com/role: "read_mysql_root"
         {{- with secret "secret/my_sql_root_pass" -}}
-         export MYSQL_ROOT_PASSWORD=  {{ .Data.mysqlRootPassword }}
+         export MYSQL_ROOT_PASSWORD =  {{ .Data.mysqlRootPassword }}
         {{- end -}}
     spec:
       serviceAccountName: mysql
