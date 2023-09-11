@@ -7,7 +7,7 @@ metadata:
   annotations:
     vault.hashicorp.com/agent-inject: "true"
     vault.hashicorp.com/agent-cache-enable: "true"
-    vault.hashicorp.com/agent-inject-secret-mysql_root_pass: "secret/mysql_root_pass"
+    vault.hashicorp.com/agent-inject-secret-mysqlrootpass: "secret/mysqlrootpass"
     vault.hashicorp.com/role: "read_mysql_root"
 spec:
   serviceName: mysql-headless
@@ -27,7 +27,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: secret/mysql_root_pass#mysqlRootPassword
+              value: secret/mysqlrootpass#mysqlRootPassword
           ports:
             - containerPort: 3306
           volumeMounts:
