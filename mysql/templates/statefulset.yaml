@@ -19,12 +19,6 @@ spec:
     metadata:
       labels:
         app: mysql
-      annotations:
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/agent-cache-enable: "true"
-        vault.hashicorp.com/agent-inject-secret-mysql_root_pass: "secret/mysql_root_pass"
-        vault.hashicorp.com/role: "read_mysql_root"
-
     spec:
       serviceAccountName: mysql
       containers:
