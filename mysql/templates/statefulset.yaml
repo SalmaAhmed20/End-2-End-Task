@@ -4,11 +4,6 @@ metadata:
   name: "mysql"
   labels:
     app: "mysql"
-  annotations:
-    vault.hashicorp.com/agent-inject: "true"
-    vault.hashicorp.com/agent-cache-enable: "true"
-    vault.hashicorp.com/agent-inject-secret-mysqlrootpass: "secret/mysqlrootpass"
-    vault.hashicorp.com/role: "read_mysql_root"
 spec:
   serviceName: mysql-headless
   replicas: {{ .Values.replicaCount }}
@@ -19,6 +14,10 @@ spec:
     metadata:
       labels:
         app: mysql
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/agent-inject-secret-mysqlrootpass: "secret/mysqlrootpass"
+        vault.hashicorp.com/role: "read_mysql_root"
     spec:
       serviceAccountName: mysql
       containers:
