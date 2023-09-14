@@ -1,5 +1,6 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const express = require('express')
+require('dotenv').config()
 const app = express()
 const port = 3000
 const host= process.env.HOST
