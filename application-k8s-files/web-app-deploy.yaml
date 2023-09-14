@@ -17,13 +17,20 @@ spec:
           vault.hashicorp.com/agent-inject-secret-database-connect.sh: "database/creds/readonly"
           vault.hashicorp.com/agent-inject-template-database-connect.sh: |
             {{- with secret "database/creds/readonly" -}}
-            mysql -h my-release-mysql.default.svc.cluster.local --user={{ .Data.username }} --password={{ .Data.password }} my_database
+
+            export USERNAME = {{.Data.username}}
+            export PASSWORD = {{ .Data.password }}
+            export HOST = mysql
+            export DATABASE = newdb
 
             {{- end -}}
     spec:
+      serviceAccountName: web-app
       containers:
       - name: web-app
         image: 297289183593.dkr.ecr.eu-west-1.amazonaws.com/onboardnodejs:latest
+        args:
+             ['sh','-c',' chmod 777 /vault/secrets/database-connect.sh  && source /vault/secrets/database-connect.sh  && node /nodeapp/app.js ']
         resources:
           limits:
             memory: "128Mi"
