@@ -1,0 +1,22 @@
+# you need to enable auth kubernetes 
+# https://developer.hashicorp.com/vault/docs/auth/kubernetes#configuration
+TOKEN_REVIEW_JWT=$(kubectl get secret vault-auth -o go-template='{{ .data.token }}' | base64 --decode) 
+KUBE_CA_CERT=$(kubectl config view --raw --minify --flatten -o jsonpath='{.clusters[].cluster.certificate-authority-data}' | base64 --decode)
+vault auth enable kubernetes
+
+vault write auth/kubernetes/config \
+token_reviewer_jwt="$TOKEN_REVIEW_JWT" \
+kubernetes_host=https://$KUBERNETES_PORT_443_TCP_ADDR:443> \
+kubernetes_ca_cert=$KUBE_CA_CERT
+#or configure it from ui
+# create acl
+vault policy write mysql-policy - <<EOF
+path "secret/*" {
+  capabilities = ["read”]
+}
+EOF
+#attach acl to role
+vault write auth/kubernetes/role/mysql \
+  bound_service_account_names=mysql \
+  bound_service_account_namespaces=default \
+  policies=mysql-policy 

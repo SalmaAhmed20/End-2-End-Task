@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mysql
+---
+apiVersion: v1
+kind: Secret
+metadata:
+ name: mysql
+ annotations:
+   kubernetes.io/service-account.name: mysql
+type: kubernetes.io/service-account-token

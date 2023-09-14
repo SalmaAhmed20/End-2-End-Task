@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: mysql-headless
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: mysql
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: 'mysql'
+        vault.hashicorp.com/agent-inject-secret-config: 'secret/mysql'
+        # Environment variable export template
+        vault.hashicorp.com/agent-inject-template-config: |
+          {{- with secret "secret/mysql" -}}
+            "{{ .Data.mysqlrootpass }}"
+          {{- end }}
+    spec:
+      serviceAccountName: mysql
+      containers:
+      - name: mysql
+        image: mysql:8.0.26
+        args:
+             ['sh','-c',' chmod 444 /vault/secrets/config && export MYSQL_ROOT_PASSWORD=$(cat /vault/secrets/config | xargs ) && echo $MYSQL_ROOT_PASSWORD && docker-entrypoint.sh mysqld']
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "gp2"
+      resources:
+        requests:
+          storage: 10Gi
