@@ -1,10 +1,9 @@
-const mysql = require('mysql2');
+const mysql = require('mysql');
 const express = require('express')
-require('dotenv').config()
 const app = express()
 const port = 3000
 const host= process.env.HOST
-const user= process.env.USERNAME
+const user= process.env.USRNAME
 const password= process.env.PASSWORD
 const database= process.env.DATABASE
 

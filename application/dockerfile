@@ -2,6 +2,5 @@ FROM node:12
 WORKDIR /nodeapp
 COPY app.js .
 COPY package.json .
-COPY .env .
 RUN npm install
 CMD ["node", "/nodeapp/app.js"]

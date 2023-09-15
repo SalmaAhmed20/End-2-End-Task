@@ -14,14 +14,11 @@ spec:
           vault.hashicorp.com/agent-inject: "true"
           vault.hashicorp.com/agent-cache-enable: "true"
           vault.hashicorp.com/role: "web-app"
-          vault.hashicorp.com/agent-inject-secret-database-connect.sh: "database/creds/readonly"
-          vault.hashicorp.com/agent-inject-template-database-connect.sh: |
+          vault.hashicorp.com/agent-inject-secret-database-connect: "database/creds/readonly"
+          vault.hashicorp.com/agent-inject-template-database-connect: |
             {{- with secret "database/creds/readonly" -}}
 
-            echo "USERNAME={{ .Data.username }}" >> /nodeapp/.env
-            echo "PASSWORD={{ .Data.password }}" >> /nodeapp/.env
-            echo "HOST=mysql" >> /nodeapp/.env
-            echo "DATABASE=newdb" >> /nodeapp/.env
+            USRNAME={{ .Data.username }}  PASSWORD={{ .Data.password }}  HOST=mysql  DATABASE=newdb 
             
             {{- end -}}
     spec:
@@ -30,7 +27,7 @@ spec:
       - name: web-app
         image: 297289183593.dkr.ecr.eu-west-1.amazonaws.com/onboardnodejs:latest
         args:
-             ['sh','-c',' chmod 777 /vault/secrets/database-connect.sh  && . /vault/secrets/database-connect.sh  && node /nodeapp/app.js ']
+             ['sh','-c',' chmod 444 /vault/secrets/database-connect  && export $(cat /vault/secrets/database-connect) && node /nodeapp/app.js ']
         resources:
           limits:
             memory: "128Mi"
