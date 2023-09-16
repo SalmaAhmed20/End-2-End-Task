@@ -20,7 +20,7 @@ connection.connect((err) => {
 });
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.send(`Hello World! database creds ${user} -- ${password} -- ${database} -- ${host}`)
   })
   
   app.listen(port, () => {
