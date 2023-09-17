@@ -1,0 +1,38 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  imageName: 'onboardnodejs'
+  ecrRegistry: 'onboardnodejs'
+  ecrRegion: 'eu-west-1'
+  dockerfilePath: '$(Build.SourcesDirectory)/application/dockerfile'
+  tag: 'latest'
+
+steps:
+- task: Docker@2
+  displayName: 'Build and push Docker image'
+  inputs:
+    command: 'buildAndPush'
+    containerRegistry: 'your-azure-container-registry'
+    repository: '$(imageName)'
+    dockerfile: '$(Build.SourcesDirectory)/application/dockerfile'
+    tags: |
+      $(tag)
+      
+- task: ECRPushImage@1
+  inputs:
+    regionName: 'eu-west-1'
+    imageSource: 'imagename'
+    sourceImageName: 'onboardnodejs'
+    repositoryName: 'onboardnodejs'
+    autoCreateRepository: true
+
