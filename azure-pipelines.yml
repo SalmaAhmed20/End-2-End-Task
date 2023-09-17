@@ -7,9 +7,7 @@ trigger:
     include:
       - main
 
-pool:
-  vmImage: 'ubuntu-latest'
-
+pool: default
 variables:
   imageName: 'onboardnodejs'
   ecrRegistry: 'onboardnodejs'
@@ -18,6 +16,9 @@ variables:
   tag: 'latest'
 
 steps:
+- task: DockerInstaller@0
+  inputs:
+    dockerVersion: '17.09.0-ce'
 - task: Docker@2
   displayName: 'Build and push Docker image'
   inputs:
