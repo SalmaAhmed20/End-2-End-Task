@@ -1,0 +1,37 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool: newPool
+variables:
+  rootDir: '$(Build.SourcesDirectory)'
+steps:
+- task: KubectlInstaller@0
+  inputs:
+    kubectlVersion: 'latest'
+- task: Kubernetes@1
+  inputs:
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'azure-access-eks'
+    namespace: 'default'
+    command: 'get'
+    arguments: 'po'
+- task: Kubernetes@1
+  inputs:
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'azure-access-eks'
+    namespace: 'default'
+    command: 'apply'
+    arguments: '-f $(rootDir)/mysql-k8s-file'
+
+- task: Kubernetes@1
+  inputs:
+    connectionType: 'Kubernetes Service Connection'
+    kubernetesServiceEndpoint: 'azure-access-eks'
+    namespace: 'default'
+    command: 'apply'
+    arguments: '-f $(rootDir)/application-k8s-files'
