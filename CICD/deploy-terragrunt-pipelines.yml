@@ -1,0 +1,83 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool: default
+
+stages:
+- stage: Initialize
+  displayName: 'Initialize'
+  jobs:
+  - job: InitializeJob
+    displayName: 'Initialize Job'
+    steps:
+    - checkout: self
+
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: |
+            if ! command -v terraform &> /dev/null 
+            then
+              echo "Terraform not found"
+              sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+              wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+              echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+              sudo apt update
+              sudo apt-get install terraform
+            else
+              echo "Terraform is already installed"
+            fi
+              if ! command -v terragrunt &> /dev/null
+              then
+                echo "Terragrunt not found"
+                curl https://github.com/gruntwork-io/terragrunt/releases/download/v0.50.12/terragrunt_linux_amd64 --output terragrunt
+                sudo chmod u+x terragrunt
+                sudo mv terragrunt /usr/local/bin/terragrunt
+              else
+                ls -l
+                pwd
+                echo "Terragrunt is already installed"
+              fi
+    - script: |
+        terragrunt init
+      displayName: 'Terragrunt Init'
+
+- stage: Plan
+  displayName: 'Plan'
+  dependsOn: Initialize
+  jobs:
+  - job: PlanJob
+    displayName: 'Plan Job'
+    steps:
+    - script: |
+        ls -l
+        pwd
+        terragrunt run-all plan --terragrunt-log-level debug --terragrunt-non-interactive   --terragrunt-ignore-dependency-errors 
+      displayName: 'Terragrunt Run-All Plan'
+
+- stage: Approval
+  displayName: 'Approval'
+  jobs:
+  - job: ApprovalJob
+    pool: server
+    displayName: 'Approval Job'
+    steps:
+    - task: ManualValidation@0
+      displayName: 'Manual Approval'
+      condition: succeeded()
+      inputs:
+        notifyUsers: eng.salma.ahmed.anees@gmail.com
+        instructions: 'Please review the Terraform plan and approve or reject the deployment.'
+
+- stage: Apply
+  displayName: 'Apply'
+  dependsOn: Approval
+  jobs:
+  - job: ApplyJob
+    displayName: 'Apply Job'
+    steps:
+    - script: |
+        terragrunt run-all apply --terragrunt-log-level debug --terragrunt-non-interactive   --auto-approve
+      displayName: 'Terragrunt Run-All Apply'
