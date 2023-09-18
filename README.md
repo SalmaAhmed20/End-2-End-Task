@@ -53,7 +53,21 @@ sudo mv /tmp/eksctl /usr/local/bin
 aws config
 aws eks update-kubeconfig --region eu-west-1 --name $(CLUSTER_NAME)
 ```
-#### 4th Register bastion Host as agent at pool to be used at execute pipeline 
+#### 4th enable eks-addons to dynamically create ebs volume 
+```
+eksctl delete iamserviceaccount --name ebs-csi-controller-sa --namespace kube-system --cluster test
+eksctl utils associate-iam-oidc-provider --region=$REGION --cluster=test --approve
+eksctl create iamserviceaccount --name ebs-csi-controller-sa --namespace kube-system --cluster test --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+    --approve \
+    --role-only \
+    --role-name AmazonEKS_EBS_CSI_DriverRole
+
+eksctl create addon \
+    --name aws-ebs-csi-driver \
+    --cluster test \
+    --service-account-role-arn arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/AmazonEKS_EBS_CSI_DriverRole
+```
+#### 5th Register bastion Host as agent at pool to be used at execute pipeline 
 ```
 curl -LO https://vstsagentpackage.azureedge.net/agent/3.225.0/vsts-agent-linux-x64-3.225.0.tar.gz
 mkdir myagent && cd myagent
@@ -61,4 +75,10 @@ tar zxvf ~/vsts-agent-linux-x64-3.225.0.tar.gz
 ```
 ![image](https://github.com/SalmaAhmed20/End-2-End-Task/assets/64385957/eb482139-90af-494a-9ebb-06a23e6b0515)
 
-#### 5th Run Pipeline [deploy-vault.yaml](https://github.com/SalmaAhmed20/End-2-End-Task/blob/b073b8fcdca34aaaaa888f5d99dd908c28720cb3/CICD/deploy-vault.yml)
+#### 6th Run Pipeline [deploy-vault.yaml](https://github.com/SalmaAhmed20/End-2-End-Task/blob/b073b8fcdca34aaaaa888f5d99dd908c28720cb3/CICD/deploy-vault.yml)
+![image](https://github.com/SalmaAhmed20/End-2-End-Task/assets/64385957/b140603e-c614-4014-bed3-4567a33b321a)
+
+#### (Optional) You can expose vault-ui using loadbalancer [ui-service.yaml](https://github.com/SalmaAhmed20/End-2-End-Task/blob/main/terraform-vault-deploy/ui-service.yaml)
+```
+kubectl apply -f terraform-vault-deploy/
+```
