@@ -41,6 +41,7 @@ stages:
                 echo "Terragrunt is already installed"
               fi
     - script: |
+        cd terragrunt-aws
         terragrunt init
       displayName: 'Terragrunt Init'
 
@@ -54,6 +55,7 @@ stages:
     - script: |
         ls -l
         pwd
+        cd terragrunt-aws
         terragrunt run-all plan --terragrunt-log-level debug --terragrunt-non-interactive   --terragrunt-ignore-dependency-errors 
       displayName: 'Terragrunt Run-All Plan'
 
@@ -79,5 +81,6 @@ stages:
     displayName: 'Apply Job'
     steps:
     - script: |
+        cd terragrunt-aws
         terragrunt run-all apply --terragrunt-log-level debug --terragrunt-non-interactive   --auto-approve
       displayName: 'Terragrunt Run-All Apply'
