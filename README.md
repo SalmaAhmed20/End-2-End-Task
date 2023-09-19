@@ -67,6 +67,8 @@ eksctl create addon \
     --cluster test \
     --service-account-role-arn arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/AmazonEKS_EBS_CSI_DriverRole
 ```
+![image](https://github.com/SalmaAhmed20/End-2-End-Task/assets/64385957/07cb728a-8e52-4a50-94f7-e9fce937ae27)
+
 #### 5th Register bastion Host as agent at pool to be used at execute pipeline 
 ```
 curl -LO https://vstsagentpackage.azureedge.net/agent/3.225.0/vsts-agent-linux-x64-3.225.0.tar.gz
@@ -78,7 +80,18 @@ tar zxvf ~/vsts-agent-linux-x64-3.225.0.tar.gz
 #### 6th Run Pipeline [deploy-vault.yaml](https://github.com/SalmaAhmed20/End-2-End-Task/blob/b073b8fcdca34aaaaa888f5d99dd908c28720cb3/CICD/deploy-vault.yml)
 ![image](https://github.com/SalmaAhmed20/End-2-End-Task/assets/64385957/b140603e-c614-4014-bed3-4567a33b321a)
 
+
 #### (Optional) You can expose vault-ui using loadbalancer [ui-service.yaml](https://github.com/SalmaAhmed20/End-2-End-Task/blob/main/terraform-vault-deploy/ui-service.yaml)
 ```
 kubectl apply -f terraform-vault-deploy/
 ```
+![image](https://github.com/SalmaAhmed20/End-2-End-Task/assets/64385957/96c98a2a-425b-4c6e-9be3-1ced97669d36)
+![image](https://github.com/SalmaAhmed20/End-2-End-Task/assets/64385957/e4f01b74-75a8-4ff3-9525-2d3871f1ffdd)
+
+ then Run Commands inside [afterdeploy.sh](https://github.com/SalmaAhmed20/End-2-End-Task/blob/main/terraform-vault-deploy/afterdeploy.sh) to \
+ 1- initalize vault (get keyshares and root token)\
+ 2- Unseal vaul to can store new secrets\
+ ## 3- Create Private ECR repo to push docker image created on it
+ you can find the application and it's dockerfile at [application](https://github.com/SalmaAhmed20/End-2-End-Task/tree/main/application)
+ 
+ 
